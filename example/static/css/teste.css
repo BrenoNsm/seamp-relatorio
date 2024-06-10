@@ -1,0 +1,35 @@
+thead {
+    border-bottom: 2px solid rgb(160, 160, 160);
+    text-align: center;
+    background-color: #2c5e77;
+    color: #fff;
+}
+
+tbody {
+    background-color: #e4f0f5;
+}
+
+.th-text {
+    font-size: medium; /* Tamanho da fonte para os cabeçalhos da tabela */
+    white-space: nowrap;
+}
+
+table {
+    border-collapse: collapse;
+    width: 100%;
+}
+
+th, td {
+    border: 1px solid #ddd; /* Adiciona grades para melhor organização */
+    padding: 10px;
+    text-align: center;
+    width: 75px; /* Ajusta a largura de todas as colunas */
+}
+
+.table-responsive {
+    overflow-x: auto;
+}
+
+/* estilazar o srcool */
+
+

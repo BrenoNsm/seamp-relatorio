@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="PT-BR">
+<head>
+    <meta charset="utf-8">
+    <title>Relatório Geral</title>
+    <link rel="shortcut icon" href="https://d1lpyqedjaq3m8.cloudfront.net/aprova/arquivosconcursos/instituicoes/2020/01/1580321681.png" type="image/x-icon">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdn.ckeditor.com/4.16.0/standard-all/contents.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <style>
+        body {
+            font-size: 14px;
+            text-align: center;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .navbar {
+            background-color: #007bff;
+            padding: 10px;
+            overflow: hidden;
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+        }
+        .link-with-button {
+            margin-right: 10px;
+        }
+        .start-button, .copy-button {
+            color: #fff;
+            background-color: #28a745;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .content-wrapper {
+            display: flex;
+            flex-direction: row;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-top: 70px;
+            padding: 0 20px;
+        }
+        .table-box {
+            flex: 1;
+            max-width: 60%;
+            border: 1px solid #ddd;
+            padding: 20px;
+            overflow: auto;
+            margin-bottom: 20px;
+        }
+        .selection-box, .selection-box-new {
+            max-width: 30%;
+            border: 1px solid #ddd;
+            padding: 20px;
+            text-align: center;
+            background-color: #fff;
+            margin-bottom: 20px;
+            position: sticky;
+            top: 70px;
+        }
+        .titulo {
+            text-align: center;
+            margin-bottom: 10px;
+        }
+        .resumo {
+            margin-bottom: 10px;
+        }
+        .selection-box select, .selection-box-new select {
+            width: 80%;
+            margin-top: 10px;
+            padding: 5px;
+            margin-bottom: 10px;
+        }
+        .selection-box textarea, .selection-box-new textarea {
+            width: 80%;
+            margin-top: 10px;
+            padding: 5px;
+        }
+        .selection-box button, .selection-box-new button {
+            width: 80%;
+            margin-top: 10px;
+            padding: 10px;
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .custom-select-wrapper input.custom-select-search {
+            width: 100%; /* Ajuste a largura conforme necessário */
+            box-sizing: border-box; /* Inclui o padding e a borda na largura total */
+        }
+
+        .custom-select-wrapper select.custom-select {
+            width: 100%; /* Ajuste a largura conforme necessário */
+            box-sizing: border-box; /* Inclui o padding e a borda na largura total */
+        }
+    </style>
+</head>
+<body>
+
+    <div class="navbar">
+        <a href="#" class="link-with-button" onclick="window.history.back();">
+            <button class="start-button">Voltar</button>
+        </a>
+          
+        <a href="#" class="link-with-button" onclick="copiarHTML(); return false;">
+            <button class="copy-button">Copiar HTML</button>
+        </a>
+    </div>
+
+    <div class="content-wrapper">
+        <div class="table-box">
+            <div class="relatorio-container" id="relatorio-container">
+                {% for municipio_dados in dados %}
+                    <!-- Add the title for each municipality -->
+                    <div class="titulo">
+                        <h3><strong>Relatório {{ municipio_dados.MUNICÍPIO }}</strong></h3>
+                    </div>
+                    {% for pergunta, resposta in municipio_dados.items %}
+                        <div class="pergunta-resposta-container">
+                            <div class="pergunta">
+                                <h4>{{ pergunta }}</h4>
+                            </div>
+                            <div class="resposta">
+                                <h5>Resposta: {{ resposta }}</h5>
+                            </div>
+                        </div>
+                        <hr>
+                    {% endfor %}
+
+                    <!-- ---------------Recorte aqui-------------- -->
+                {% endfor %}
+            </div>
+        </div>
+
+        <div class="selection-box">
+            <h3>Selecione a Pergunta</h3>
+            <div class="custom-select-wrapper">
+                <input type="text" class="custom-select-search" placeholder="Pesquisar.." onkeyup="filterOptions()">
+                <select id="perguntaSelect" class="custom-select" size="8">
+                    {% for pergunta in perguntas_unicas %}
+                        <option value="{{ pergunta }}">{{ pergunta }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <textarea id="respostaInput" class="ckeditor" placeholder="Digite a resposta"></textarea>
+            <br>
+            <button onclick="adicionarResposta()" type="button" class="btn btn-primary mb">Adicionar Resposta</button>
+            <button onclick="desfazer()">Desfazer</button>
+        </div>        
+
+        <!-- Novo selection box -->
+        <div class="selection-box-new">
+            <h3>Elementos de Introdução</h3>
+            <select id="novoSelect" class="custom-select">
+                <option value="Apresentacão">Apresentação</option>
+                <option value="Realizacão">Realização</option>
+                <option value="Acões Desenvolvidas">Ações Desenvolvidas</option>
+                <option value="Metodologia">Metodologia do Levantamento</option>
+                <option value="Conclusões">Conclusões</option>
+            </select>
+            <textarea id="novoTextarea" class="ckeditor" placeholder="Digite algo específico"></textarea>
+            <br>
+            <!-- Botão chamando a nova função -->
+            <button onclick="adicionarNovoResumoCustom()">Adicionar Novo Resumo</button>
+            <button onclick="refazer()">Refazer</button>
+        </div>
+
+        <!-- ... (o resto do seu corpo HTML permanece inalterado) ... -->
+
+        <script src="https://cdn.ckeditor.com/4.16.0/standard-all/ckeditor.js"></script>
+        <script>
+            var undoStack = [];
+            var redoStack = [];
+
+        document.addEventListener("DOMContentLoaded", function () {
+            CKEDITOR.replace('respostaInput');
+            CKEDITOR.replace('novoTextarea');
+        });
+
+        function copiarHTML() {
+            var tableBox = document.querySelector('.table-box');
+            var textoArea = document.createElement('textarea');
+            textoArea.value = tableBox.outerHTML;
+            document.body.appendChild(textoArea);
+            textoArea.select();
+            document.execCommand('copy');
+            document.body.removeChild(textoArea);
+            alert('HTML copiado para a área de transferência');
+        }
+
+        function adicionarResposta() {
+            var tableBox = document.querySelector('.table-box');
+            var selectedQuestion = document.getElementById('perguntaSelect').value;
+            var enteredText = CKEDITOR.instances['respostaInput'].getData();
+
+            var currentState = tableBox.outerHTML;
+            undoStack.push(currentState);
+            redoStack = [];
+
+            var perguntaContainers = document.querySelectorAll('.pergunta');
+            perguntaContainers.forEach(function (container) {
+                if (container.textContent.trim() === selectedQuestion) {
+                    var respostaDiv = document.createElement('div');
+                    respostaDiv.className = 'resposta';
+                    respostaDiv.innerHTML = '<p><strong>Texto Complementar:</strong></p> <p>' + enteredText + '</p>';
+
+                    var existingRespostas = container.nextElementSibling;
+                    if (existingRespostas) {
+                        existingRespostas.appendChild(respostaDiv);
+                    } else {
+                        var respostaContainer = document.createElement('div');
+                        respostaContainer.className = 'resposta-container';
+                        respostaContainer.appendChild(respostaDiv);
+                        container.parentNode.appendChild(respostaContainer);
+                    }
+                }
+            });
+
+            CKEDITOR.instances['respostaInput'].setData('');
+        }
+
+        function adicionarNovoResumoCustom() {
+            var tableBox = document.querySelector('.table-box');
+            var novoSelectValue = document.getElementById('novoSelect').value;
+            var novoTextareaValue = CKEDITOR.instances['novoTextarea'].getData();
+
+            var currentState = tableBox.outerHTML;
+            undoStack.push(currentState);
+            redoStack = [];
+
+            var titulosRelatorio = document.querySelectorAll('.titulo');
+            titulosRelatorio.forEach(function (titulo) {
+                var novoResumoDiv = document.createElement('div');
+                novoResumoDiv.className = 'novo-resumo';
+                novoResumoDiv.innerHTML = '<h4>' + novoSelectValue + ':</h4> <h5>' + novoTextareaValue + '</h5>';
+
+                titulo.appendChild(novoResumoDiv);
+            });
+
+            document.getElementById('novoSelect').value = 'Apresentacao';
+            CKEDITOR.instances['novoTextarea'].setData('');
+        }
+
+        function desfazer() {
+            var tableBox = document.querySelector('.table-box');
+            if (undoStack.length > 0) {
+                var currentState = tableBox.outerHTML;
+                redoStack.push(currentState);
+
+                var previousState = undoStack.pop();
+                tableBox.outerHTML = previousState;
+            }
+        }
+
+        function refazer() {
+            var tableBox = document.querySelector('.table-box');
+            if (redoStack.length > 0) {
+                var currentState = tableBox.outerHTML;
+                undoStack.push(currentState);
+
+                var nextState = redoStack.pop();
+                tableBox.outerHTML = nextState;
+            }
+        }
+
+        function filterOptions() {
+            var input, filter, select, options, option, i;
+            input = document.querySelector('.custom-select-search');
+            filter = input.value.toUpperCase();
+            select = document.getElementById("perguntaSelect");
+            options = select.getElementsByTagName("option");
+            for (i = 0; i < options.length; i++) {
+                option = options[i];
+                if (option.textContent.toUpperCase().indexOf(filter) > -1) {
+                    option.style.display = "";
+                } else {
+                    option.style.display = "none";
+                }
+            }
+        }
+                        
+        </script>
+    </div>
+</body>
+</html>

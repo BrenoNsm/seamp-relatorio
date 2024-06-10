@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="utf-8">
+    <title>Relatorio Individual</title>
+    <link rel="shortcut icon" href="https://d1lpyqedjaq3m8.cloudfront.net/aprova/arquivosconcursos/instituicoes/2020/01/1580321681.png" type="image/x-icon">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+
+    <style>
+        body{
+            background-color: #f8f9fa;
+        }
+
+    </style>
+</head>
+
+<body class="d-flex align-items-center justify-content-center" style="min-height: 100vh;">
+    <div style="text-align: center;">
+        <h2>Selecione o Município </h2>
+
+        <!-- Form for generating Individual Report -->
+        <form method="post" action="{% url 'relatorio_individual' %}">
+            {% csrf_token %}
+            <select name="municipio" class="form-select mb-2">
+                {% for municipio in municipios %}
+                    <option value="{{ municipio }}">{{ municipio }}</option>
+                {% endfor %}
+            </select>
+            
+            <button onclick="window.history.back();" class="btn btn-primary mb">Voltar</button>
+            <button type="submit" class="btn btn-success">Produzir Relatório Individual</button>
+        </form>
+
+        <hr> <!-- Add a horizontal line for visual separation -->
+
+        <!-- Form for generating General Report -->
+        <form method="post" action="{% url 'relatorio_geral' %}">
+            {% csrf_token %}
+            <!-- No need to select a specific municipality for the general report -->
+            <button type="submit" class="btn btn-success">Produzir Relatório Geral</button>
+        </form>
+    </div>
+</body>
+</html>

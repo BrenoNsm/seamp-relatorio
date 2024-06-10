@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="PT-BR">
+<head>
+    <meta charset="utf-8">
+    <title>Relatório Individual</title>
+    <link rel="shortcut icon" href="https://d1lpyqedjaq3m8.cloudfront.net/aprova/arquivosconcursos/instituicoes/2020/01/1580321681.png" type="image/x-icon">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+    <!-- Inclua o CSS do CKEditor -->
+    <link rel="stylesheet" href="https://cdn.ckeditor.com/4.16.0/standard-all/contents.css">
+    <style>
+        body {
+            font-size: 14px; /* Ajuste o tamanho da fonte conforme necessário */
+            text-align: center; /* Centralize o conteúdo do body */
+            margin: 0; /* Remova as margens padrão do body */
+            padding: 0; /* Remova o preenchimento padrão do body */
+        }
+        .navbar {
+            background-color: #007bff; /* Cor de fundo da navbar do Bootstrap */
+            padding: 10px;
+            overflow: hidden;
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000; /* Adicione uma camada z-index para sobrepor outros elementos */
+        }
+        .link-with-button {
+            margin-right: 10px; /* Adicione margem à direita para separar os botões */
+        }
+        .start-button, .copy-button {
+            color: #fff; /* Cor do texto dos botões */
+            background-color: #28a745; /* Cor de fundo dos botões do Bootstrap (verde) */
+            border: none;
+            padding: 5px 10px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .table-box {
+            max-width: 800px; /* Largura máxima da folha A4 */
+            margin: 70px auto 20px; /* Adicione espaço acima e abaixo da tabela e centralize horizontalmente */
+            border: 1px solid #ddd; /* Adicione uma borda para simular o contorno da folha */
+            padding: 20px; /* Adicione um preenchimento para o conteúdo dentro da folha A4 */
+        }
+    </style>
+</head>
+<body>
+
+    <div class="navbar">
+        <a href="#" class="link-with-button" onclick="window.history.back();">
+            <button class="start-button">Voltar</button>
+        </a>
+          
+        <a href="#" class="link-with-button" onclick="copiarHTML(); return false;">
+            <button class="copy-button">Copiar HTML</button>
+        </a>
+    </div>
+
+    <div class="table-box">
+
+        <div class="relatorio-container" id="relatorio-container">
+            {% for pergunta, resposta in dados.items %}
+                <div class="pergunta-resposta-container">
+                    <div class="pergunta">
+                        <h3>{{ pergunta }}</h3>
+                    </div>
+                    <div class="resposta">
+                        <h4>{{ resposta }}</h4>
+                        <textarea id="{{ pergunta }}" class="ckeditor"></textarea>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <!-- Inclua o script do CKEditor -->
+    <script src="https://cdn.ckeditor.com/4.16.0/standard-all/ckeditor.js"></script>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            // Inicie o CKEditor nas áreas de texto desejadas
+            var textAreas = document.querySelectorAll('.ckeditor');
+            textAreas.forEach(function(textArea) {
+                CKEDITOR.replace(textArea);
+            });
+        });
+
+        function copiarHTML() {
+            var perguntasRespostas = document.querySelectorAll('.pergunta-resposta-container');
+            var conteudoHTML = '<table>\n';
+        
+            perguntasRespostas.forEach(function(prContainer) {
+                var pergunta = prContainer.querySelector('.pergunta h3').innerText;
+                var respostaParagrafo = prContainer.querySelector('.resposta h4').innerText;
+                var respostaTextareaId = prContainer.querySelector('.resposta textarea').id;
+                
+                // Obtenha o conteúdo do CKEditor
+                var respostaCKEditor = CKEDITOR.instances[respostaTextareaId].getData();
+        
+                conteudoHTML += '    <tr>\n';
+                conteudoHTML += '        <td><h3>' + pergunta + '</h3><h4>' + respostaParagrafo + '</h4><p>' + respostaCKEditor + '</p></td>\n';
+                conteudoHTML += '    </tr>\n';
+            });
+        
+            conteudoHTML += '</table>\n';
+        
+            var textareaCopiar = document.createElement('textarea');
+            textareaCopiar.value = conteudoHTML;
+        
+            document.body.appendChild(textareaCopiar);
+            textareaCopiar.select();
+            document.execCommand('copy');
+            document.body.removeChild(textareaCopiar);
+        
+            alert('Conteúdo dos textareas e CKEditor copiados para a área de transferência no formato HTML com a tag <table> e uma coluna!');
+        }
+    </script>
+
+</body>
+</html>

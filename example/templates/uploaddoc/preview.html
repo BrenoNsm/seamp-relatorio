@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="PT-BR">
+<head>
+    <meta charset="utf-8">
+    <title>Pré-Visualização do Documento</title>
+    <link rel="shortcut icon" href="https://d1lpyqedjaq3m8.cloudfront.net/aprova/arquivosconcursos/instituicoes/2020/01/1580321681.png" type="image/x-icon">
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            padding: 0;
+            background-color: #f8f9fa;
+        }
+
+        h2 {
+            font-family: Arial, sans-serif;
+        }
+
+        .navbar {
+            background-color: #007bff;
+            overflow: hidden;
+            position: fixed;
+            width: 100%;
+            top: 0;
+        }
+
+        .navbar a {
+            float: left;
+            display: block;
+            color: #333;
+            text-align: center;
+            padding: 14px 16px;
+            text-decoration: none;
+        }
+
+        .navbar a:hover {
+            background-color: #ddd;
+            color: #333;
+        }
+
+        .navbar .next-container {
+            float: right;
+        }
+
+        .navbar a.next {
+            background-color: #28a745; /* Cor verde */
+            color: #fff;
+            padding: 14px 16px;
+            border-radius: 10px;
+        }
+
+        .table-box {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 80vh;
+            width: 80%;
+            margin: 0 auto;
+            background-color: #ececec;
+            padding: 20px;
+            border-radius: 10px;
+            margin-top: 70px;
+        }
+
+        table {
+            font-family: Arial, sans-serif;
+            border-collapse: collapse;
+            width: 100%;
+        }
+
+        th, td {
+            border: 1px solid #dddddd;
+            text-align: center;
+            padding: 5px;
+            font-size: 12px;
+            margin-top: 0 !important;
+            line-height: 1;
+        }
+
+        th {
+            background-color: #f2f2f2;
+        }
+
+        .table-container {
+            max-height: 90vh;
+            overflow: auto;
+            margin-top: 1 !important;
+        }
+
+        .navbar a.inicio {
+            /* Estilos semelhantes ao próximo link */
+            float: left;
+            display: block;
+            color: #fff; /* Cor do texto */
+            text-align: center;
+            padding: 14px 16px;
+            background-color: #28a745; /* Cor de fundo azul */
+            text-decoration: none;
+            border-radius: 10px;
+        }
+        
+    </style>
+</head>
+<body>
+
+    <div class="navbar">
+        <a href="" class="inicio">Voltar</a>
+        <div class="next-container">
+            <a href="gerar_relatorios_municipios" class="next">Próximo</a>
+        </div>
+    </div>
+    
+    <div class="table-box">
+        <div class="table-container">
+            <!-- Adicione a classe table do Bootstrap à sua tabela -->
+            <table id="excel-preview" class="display table">
+                {{ data | safe }}
+            </table>
+        </div>
+    </div>
+    
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js" integrity="sha256-oP6HI/tZ1oPBl5F+6QHYuTl2KOe4l2d3l+y49Jc5uKc=" crossorigin="anonymous"></script>
+    <script src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/1.11.5/js/dataTables.bootstrap5.min.js"></script>
+
+    <script>
+        $(document).ready( function () {
+            $('#excel-preview').DataTable();
+        });
+
+        function enviarParaVisualizacao() {
+            var camposSelecionados = $('input[name="campos_selecionados"]:checked').map(function(){
+                return this.value;
+            }).get();
+
+            camposSelecionados.forEach(function(coluna) {
+                $('#formSelecao').append($('<input>').attr({
+                    type: 'hidden',
+                    name: 'campos_selecionados',
+                    value: coluna
+                }));
+            });
+
+            $('#formSelecao').submit();
+        }
+    </script>
+
+    <!-- Lógica para obter os títulos das colunas do CSV -->
+    <script>
+        var colunas = ['ID', 'ÚLTIMA PÁGINA', 'IDIOMA INICIAL'];
+    </script>
+</body>
+</html>
